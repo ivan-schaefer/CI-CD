@@ -37,7 +37,3 @@ jobs:
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
-      - name: Update values.yaml with image info
-        run: |
-          sed -i "s|repository: .*|repository: $ECR_REGISTRY/python-app|" chart/values.yaml
-          sed -i "s|tag: .*|tag: $IMAGE_TAG|" chart/values.yaml
