@@ -10,3 +10,14 @@ service:
   port: 80
 
 resources: {}
+
+ingress:
+  enabled: true
+  host: 
+
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    kubernetes.io/ingress.class: alb

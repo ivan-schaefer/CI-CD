@@ -1,3 +1,4 @@
+{{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -5,10 +6,10 @@ metadata:
   labels:
     app: {{ .Chart.Name }}
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    {{- toYaml .Values.metadata.annotations | nindent 4 }}
 spec:
   rules:
-    - host: {{ .Values.ingress.host }}
+    - host: {{ .Values.ingress.host | quote }}
       http:
         paths:
           - path: /
@@ -18,3 +19,4 @@ spec:
                 name: {{ .Release.Name }}-service
                 port:
                   number: 80
+{{- end }}
