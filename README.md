@@ -1,5 +1,5 @@
 # CI/CD for Kubernetes with GitHub Actions, GitLab Ci/CD and Jenkins
-[![My Skills](https://skillicons.dev/icons?i=kubernetes,githubactions,jenkins,gitlab &perline=5)](https://skillicons.dev) 
+[![My Skills](https://skillicons.dev/icons?i=kubernetes,githubactions,jenkins,gitlab&perline=5)](https://skillicons.dev) 
 
 <p align="center">
   <img src="https://github.com/cncf/artwork/blob/main/projects/helm/icon/color/helm-icon-color.png?raw=true" width="100" alt="Helm Logo" />
