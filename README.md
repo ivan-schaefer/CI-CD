@@ -1,6 +1,8 @@
-# CI/CD for Kubernetes with GitHub Actions
+# CI/CD for Kubernetes with GitHub Actions, GitLab Ci/CD and Jenkins
+[![My Skills](https://skillicons.dev/icons?i=kubernetes,githubactions,jenkins,gitlab &perline=5)](https://skillicons.dev) ![Helm Logo](https://github.com/cncf/artwork/blob/main/projects/helm/icon/color/helm-icon-color.png?raw=true)
 
 This repository contains reusable and secure GitHub Actions workflows to automate the CI/CD process for Kubernetes applications running on AWS EKS. The workflows are integrated with ArgoCD, Amazon ECR, and follow best practices including OIDC-based IAM authentication and image signing.
+
 
 ---
 
@@ -9,16 +11,38 @@ This repository contains reusable and secure GitHub Actions workflows to automat
 <pre>
 .
 ├── .github/
-│   └── workflows/            # GitHub Actions workflows
-│       ├── build.yml         # Build and push Docker image to Amazon ECR
-│       ├── deploy.yml        # Update Helm chart and sync ArgoCD app
-│       ├── test.yml          # Run tests (e.g. pytest)
-│       └── sign.yml          # Cosign image signing
-├── chart/                    # Helm charts
-├── app/                      # Source code of the application (e.g. Python app)
-├── Dockerfile                # Docker image definition
-├── requirements.txt          # dependencies for app
-
+│   └── workflows/                   # GitHub Actions workflows
+│       ├── build.yml                # Build and push Docker image to Amazon ECR
+│       ├── deploy.yml               # Update Helm chart and sync ArgoCD app
+│       ├── test.yml                 # Run tests (e.g. pytest)
+│       └── sign.yml                 # Cosign image signing
+│
+├── app/                             # Source code of the application (e.g. Python app)
+│   └── main.py
+│
+├── argocd/                          # ArgoCD configurations (optional, if populated later)
+│
+├── chart/
+│   └── my-app/                      # Helm chart
+│       ├── Chart.yaml
+│       ├── values.yaml              # main values file
+│       ├── templates/
+│       ├── .helmignore              # Ignore patterns for Helm
+│       │   ├── mainapp/             # Main deployment templates
+│       │   │   ├── deployment-mainapp.yaml
+│       │   │   ├── hpa-mainapp.yaml
+│       │   │   ├── ingress-mainapp.yaml
+│       │   │   └── service-mainapp.yaml
+│       │   ├── _configmap-common.tpl
+│       │   ├── _deployment-common.tpl
+│       │   ├── _helpers.tpl
+│       │   ├── _hpa-common.tpl
+│       │   ├── _ingress-common.tpl
+│       │   └── _service-common.tpl
+│
+├── Dockerfile                       # Docker image definition
+├── requirements.txt                 # Dependencies for app (Python)
+├── README.md
 
 
 </pre>
