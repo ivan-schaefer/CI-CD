@@ -1,5 +1,9 @@
 # CI/CD for Kubernetes with GitHub Actions, GitLab Ci/CD and Jenkins
-[![My Skills](https://skillicons.dev/icons?i=kubernetes,githubactions,jenkins,gitlab &perline=5)](https://skillicons.dev) ![Helm Logo](https://github.com/cncf/artwork/blob/main/projects/helm/icon/color/helm-icon-color.png?raw=true)
+[![My Skills](https://skillicons.dev/icons?i=kubernetes,githubactions,jenkins,gitlab &perline=5)](https://skillicons.dev) 
+
+<p align="center">
+  <img src="https://github.com/cncf/artwork/blob/main/projects/helm/icon/color/helm-icon-color.png?raw=true" width="100" alt="Helm Logo" />
+</p>
 
 This repository contains reusable and secure GitHub Actions workflows to automate the CI/CD process for Kubernetes applications running on AWS EKS. The workflows are integrated with ArgoCD, Amazon ECR, and follow best practices including OIDC-based IAM authentication and image signing.
 
