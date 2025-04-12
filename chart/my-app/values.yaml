@@ -3,6 +3,7 @@ myapp:
 
   replicaCount: 1
 
+default:
   service:
     type: ClusterIP
     labels: {}

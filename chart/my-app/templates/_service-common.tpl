@@ -15,27 +15,26 @@ Supports:
 {{- $ := index . 0 }}
 {{- with index . 1 }}
 {{- if not .disabled }}
+
+{{- $svc := .service | default $.Values.default.service }}
+
 apiVersion: v1
 kind: Service
 metadata:
-  {{- with .service }}
-    {{- with .annotations }}
-  annotations:
-      {{- range $key, $value := . }}
-    {{ $key }}: {{ $value | quote }}
-      {{- end }}
-    {{- end }}
-  {{- end }}
   name: {{ include "my-app.component.fullname" (dict "context" $ "name" .name) }}
   namespace: {{ $.Release.Namespace | quote }}
   labels:
     {{- include "my-app.labels" (dict "context" $ "component" .name "name" .name) | nindent 4 }}
-    {{- with .service.labels }}
+    {{- with $svc.labels }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
+  {{- with $svc.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
+  type: {{ $svc.type }}
   {{- $context := . }}
-  type: {{ (.service | default $.Values.default.service).type }}
   {{- with .containerPorts | default $.Values.default.containerPorts }}
   ports:
     {{- range $key, $value := . }}
@@ -47,6 +46,7 @@ spec:
   {{- end }}
   selector:
     {{- include "my-app.selectorLabels" (dict "context" $ "name" .name) | nindent 4 }}
+
 {{- end }}
 {{- end }}
 {{- end }}

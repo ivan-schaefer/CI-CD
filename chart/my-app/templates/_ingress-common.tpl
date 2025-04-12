@@ -16,7 +16,10 @@ Supports:
 {{- $ := index . 0 }}
 {{- with index . 1 }}
 {{- if not .disabled }}
-{{- if .ingress.enabled }}
+
+{{- $ing := .ingress | default $.Values.default.ingress }}
+{{- if $ing.enabled }}
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -24,45 +27,46 @@ metadata:
   namespace: {{ $.Release.Namespace | quote }}
   labels:
     {{- include "my-app.labels" (dict "context" $ "component" .name "name" .name) | nindent 4 }}
-    {{- with .ingress.labels }}
+    {{- with $ing.labels }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
-  {{- if .ingress.annotations }}
+  {{- with $ing.annotations }}
   annotations:
-    {{- range $key, $value := .ingress.annotations }}
+    {{- range $key, $value := . }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
   {{- end }}
 spec:
-  {{- if .ingress.ingressClassName }}
-  ingressClassName: {{ .ingress.ingressClassName }}
+  {{- if $ing.ingressClassName }}
+  ingressClassName: {{ $ing.ingressClassName }}
   {{- end }}
   rules:
-  {{- range $host := .ingress.hosts }}
-  - host: {{ include "tplvalue" (list $ . $host.host) }}
-    http:
-      paths:
-      {{- range $path := $host.paths }}
-      - path: {{ $path.path }}
-        pathType: {{ $path.pathType }}
-        backend:
-          service:
-            name: {{ include "tplvalue" (list $ . $path.backendName) }}
-            port:
-              number: {{ include "tplvalue" (list $ . $path.backendPort) }}
-      {{- end }}
-  {{- end }}
-  {{- if and .ingress.tls .ingress.https }}
-  tls:
-  {{- range .ingress.tls }}
-  - hosts:
-    {{- range .hosts }}
-    - {{ include "tplvalue" (list $ . .) }}
+    {{- range $host := $ing.hosts }}
+    - host: {{ include "tplvalue" (list $ . $host.host) }}
+      http:
+        paths:
+          {{- range $path := $host.paths }}
+          - path: {{ $path.path }}
+            pathType: {{ $path.pathType }}
+            backend:
+              service:
+                name: {{ include "tplvalue" (list $ . $path.backendName) }}
+                port:
+                  number: {{ include "tplvalue" (list $ . $path.backendPort) }}
+          {{- end }}
     {{- end }}
-    secretName: {{ include "tplvalue" (list $ . .secretName) }}
+  {{- if and $ing.tls $ing.https }}
+  tls:
+    {{- range $ing.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ include "tplvalue" (list $ . .) }}
+        {{- end }}
+      secretName: {{ include "tplvalue" (list $ . .secretName) }}
+    {{- end }}
   {{- end }}
-  {{- end }}
-{{- end }}
-{{- end }}
-{{- end }}
-{{- end }}
+
+{{- end }} {{/* if $ing.enabled */}}
+{{- end }} {{/* if not .disabled */}}
+{{- end }} {{/* with index . 1 */}}
+{{- end }} {{/* define */}}
