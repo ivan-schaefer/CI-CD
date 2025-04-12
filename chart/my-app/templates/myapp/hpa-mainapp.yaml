@@ -1,0 +1,3 @@
+{{- with .Values.myapp }}
+{{- template "my-app.component.hpa" (list $ .) }}
+{{- end }}
