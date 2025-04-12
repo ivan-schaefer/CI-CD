@@ -1,24 +1,41 @@
-replicaCount: 1
+myapp:
+  name: myapp
 
-image:
-  repository: 061051264545.dkr.ecr.eu-central-1.amazonaws.com/python-app
-  tag: latest
-  pullPolicy: IfNotPresent
+  replicaCount: 1
 
-service:
-  type: ClusterIP
-  port: 80
-  targetPort: 8080 
+  service:
+    type: ClusterIP
+    labels: {}
+    annotations: {}
+  containerPorts:
+    http: 8080
 
-resources: {}
+  resources: {}
 
-ingress:
-  enabled: true
-  host: ""
+  ingress:
+    enabled: true
+    ingressClassName: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/backend-protocol: HTTP
+    hosts:
+      - host: ""
+        paths:
+          - path: /
+            pathType: Prefix
+            backendName: myapp
+            backendPort: 8080
+    https: false
+    tls: []
 
-metadata:
-  annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/backend-protocol: HTTP
-    kubernetes.io/ingress.class: alb
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 75
+    targetMemoryUtilizationPercentage: 80
+
+  affinity: {}
+  tolerations: []
+  nodeSelector: {}
