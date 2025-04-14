@@ -99,19 +99,20 @@ Runs automated tests, e.g. `pytest`, on every pull request.
 - [ ] Add support for:
   - [ ] GitLab CI/CD pipelines
   - [ ] Jenkins pipelines
-- [ ] Improve testing:
-  - [ ] Add Linter (e.g. yamllint, hadolint, helm lint)
-  - [ ] Add **SonarQube** for code quality
-  - [ ] Add **Trivy** for vulnerability scanning
-  - [ ] Add **Cosign** image signing
+- [✅] Improve testing:
+  - [✅ ] Add Linter (e.g. yamllint, hadolint, helm lint)
+  - [✅] Add **SonarQube** for code quality
+  - [✅] Add **Trivy** for vulnerability scanning
+  - [✅] Add **Cosign** image signing
 - [ ] Implement CI best practices:
   - [ ] Docker layer caching
   - [ ] BuildKit / Buildx usage
 - [ ] Add support for:
   - [ ] ArgoCD Rollouts with **Canary** strategy
   - [ ] Helm Rollouts with **Canary**/**Blue-Green** deployment
-  - [ ] Rollbacks from GitHub Actions, GitLab CI, and Jenkins
-- [ ] Integrate **HPA** (HorizontalPodAutoscaler) 
+- [✅] Integrate **HPA** (HorizontalPodAutoscaler) 
 - [ ] Enforce image tag management and **ConfigMap** tracking/versioning
 - [ ] Set **terminationGracePeriodSeconds** properly for all Pods
 - [ ] Add **PodDisruptionBudget** for high availability
+- [ ] Add Volume for AWS Secret Manager
+ 
