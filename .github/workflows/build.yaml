@@ -1,0 +1,99 @@
+name: Build
+
+on:
+  workflow_run:
+    workflows: ["Test Code"]
+    types:
+      - completed
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: eu-central-1
+  AWS_DEFAULT_REGION: eu-central-1
+  IMAGE_NAME: python-app
+  IMAGE_TAG: latest
+  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com
+  IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com/python-app:latest
+
+jobs:
+
+  build:
+    name: Build Docker image and tag for ECR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-oidc-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        run: |
+          echo "Building image: ${{ env.IMAGE_URI }}"
+          docker build -t "${{ env.IMAGE_URI }}" .
+          docker save "${{ env.IMAGE_URI }}" -o image.tar
+
+      - name: Upload image as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-image
+          path: image.tar
+
+  scan-trivy:
+    name: Scan Docker image with Trivy
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download image artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: docker-image
+          path: .
+
+      - name: Load Docker image
+        run: |
+          docker load -i image.tar
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_URI }}
+          format: table
+          exit-code: 1
+          ignore-unfixed: true
+          
+  sign-image:
+    name: Sign Docker image with Cosign
+    runs-on: ubuntu-latest
+    needs: scan-trivy
+    steps:
+      - name: Download image artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: docker-image
+          path: .
+
+      - name: Load Docker image
+        run: |
+          docker load -i image.tar
+
+      - name: Install Cosign
+        run: |
+          curl -sSL -o cosign https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64
+          chmod +x cosign
+          sudo mv cosign /usr/local/bin/cosign
+
+      - name: Sign image
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+        run: |
+          cosign sign "${{ env.IMAGE_URI }}"
